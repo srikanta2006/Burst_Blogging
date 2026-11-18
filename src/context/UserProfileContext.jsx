@@ -18,13 +18,17 @@ export function useUserProfiles() {
 export function UserProfileProvider({ children }) {
   const { currentUser } = useAuth();
   const [profiles, setProfiles] = useState({});
+  const [loadedUid, setLoadedUid] = useState(null);
   const fetchedIdsRef = useRef(new Set());
   const inFlightIdsRef = useRef(new Set());
 
   // Subscribe in real time to the currently logged-in user's Firestore profile.
-  // Any profile photo or username change immediately propagates across the entire app.
+  // Any profile photo, username, or readingList change immediately propagates across the entire app.
   useEffect(() => {
-    if (!currentUser?.uid) return;
+    if (!currentUser?.uid) {
+      setLoadedUid(null);
+      return;
+    }
 
     const uid = currentUser.uid;
     const userRef = doc(db, 'users', uid);
@@ -45,6 +49,7 @@ export function UserProfileProvider({ children }) {
                 data.profilePictureURL !== undefined
                   ? data.profilePictureURL
                   : currentUser.photoURL || '',
+              readingList: Array.isArray(data.readingList) ? data.readingList : [],
             },
           }));
         } else {
@@ -54,12 +59,15 @@ export function UserProfileProvider({ children }) {
               uid,
               username: currentUser.displayName || currentUser.email || '',
               profilePictureURL: currentUser.photoURL || '',
+              readingList: [],
             },
           }));
         }
+        setLoadedUid(uid);
       },
       (error) => {
         console.error('Error listening to current user profile:', error);
+        setLoadedUid(uid);
       }
     );
 
@@ -123,10 +131,12 @@ export function UserProfileProvider({ children }) {
   }, []);
 
   const currentUserProfile = currentUser?.uid ? profiles[currentUser.uid] || null : null;
+  const currentUserProfileLoaded = !currentUser?.uid || loadedUid === currentUser.uid;
 
   const value = {
     profiles,
     currentUserProfile,
+    currentUserProfileLoaded,
     ensureUserProfile,
     ensureUserProfiles,
     updateCachedProfile,

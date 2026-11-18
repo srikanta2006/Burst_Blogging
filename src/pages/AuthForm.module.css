@@ -300,6 +300,45 @@
   }
 }
 
+/* Dark Mode data-theme support */
+[data-theme="dark"] .formWrapper {
+  background: rgba(19, 27, 46, 0.94);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .title {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .subtitle {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .label {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .input {
+  background: #0f172a;
+  border-color: #26334d;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .socialButton {
+  background: #0f172a;
+  border-color: #26334d;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .divider {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .divider::before,
+[data-theme="dark"] .divider::after {
+  background: #26334d;
+}
+
 /* Focus visible for accessibility */
 .submitButton:focus-visible,
 .socialButton:focus-visible,

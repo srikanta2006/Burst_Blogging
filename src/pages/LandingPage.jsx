@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ArrowRight, Sparkles, BookOpen, Users, Zap } from 'lucide-react';
+import { ArrowRight, Sparkles, BookOpen } from 'lucide-react';
+import BurstLogo from '../components/BurstLogo';
 import styles from './LandingPage.module.css';
 
 function LandingPage() {
@@ -50,6 +51,11 @@ function LandingPage() {
 
       <main className={styles.hero}>
         <div className={styles.heroContent}>
+          {/* Brand Logo Display */}
+          <div style={{ marginBottom: '1.75rem', display: 'flex', justifyContent: 'center' }}>
+            <BurstLogo size="lg" />
+          </div>
+
           {/* Badge */}
           <div className={styles.badge}>
             <Sparkles size={16} />
@@ -75,7 +81,7 @@ function LandingPage() {
               <span>Start Creating</span>
               <ArrowRight size={20} />
             </Link>
-            <Link to="/explore" className={styles.secondaryCta}>
+            <Link to="/signup" className={styles.secondaryCta}>
               <BookOpen size={20} />
               <span>Explore Stories</span>
             </Link>

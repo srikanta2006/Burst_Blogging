@@ -1,13 +1,25 @@
 // src/components/LikeButton.jsx
 import { useState, useEffect } from 'react';
 import { db } from '../firebase/config';
-import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
-import styles from './ActionButtons.module.css'; // Use the correct, dedicated stylesheet
+import { useUserProfiles } from '../context/UserProfileContext';
+import styles from './ActionButtons.module.css';
 import { Heart } from 'lucide-react';
 
 function LikeButton({ postId }) {
   const { currentUser } = useAuth();
+  const { currentUserProfile } = useUserProfiles();
   const [isLiked, setIsLiked] = useState(false);
   const [postData, setPostData] = useState(null);
 
@@ -31,21 +43,40 @@ function LikeButton({ postId }) {
 
     try {
       await updateDoc(postRef, {
-        likes: willLike ? arrayUnion(currentUser.uid) : arrayRemove(currentUser.uid)
+        likes: willLike ? arrayUnion(currentUser.uid) : arrayRemove(currentUser.uid),
       });
 
       // If user is liking the post and is not the author, send notification
-      if (willLike && postData?.authorId && postData.authorId !== currentUser.uid) {
-        const notificationRef = collection(db, 'users', postData.authorId, 'notifications');
-        await addDoc(notificationRef, {
-          type: 'like',
-          fromUser: currentUser.displayName || currentUser.email,
-          fromUserId: currentUser.uid,
-          postId: postId,
-          postTitle: postData.title || 'Untitled Post',
-          read: false,
-          createdAt: serverTimestamp(),
-        });
+      if (willLike) {
+        let authorId = postData?.authorId;
+        let postTitle = postData?.title;
+
+        if (!authorId) {
+          const snap = await getDoc(postRef);
+          if (snap.exists()) {
+            authorId = snap.data().authorId;
+            postTitle = snap.data().title;
+          }
+        }
+
+        if (authorId && authorId !== currentUser.uid) {
+          const senderName =
+            currentUserProfile?.username ||
+            currentUser.displayName ||
+            currentUser.email?.split('@')[0] ||
+            'A reader';
+
+          const notificationRef = collection(db, 'users', authorId, 'notifications');
+          await addDoc(notificationRef, {
+            type: 'like',
+            fromUser: senderName,
+            fromUserId: currentUser.uid,
+            postId: postId,
+            postTitle: postTitle || 'your story',
+            read: false,
+            createdAt: serverTimestamp(),
+          });
+        }
       }
     } catch (err) {
       console.error('Failed to update like status:', err);
@@ -53,9 +84,15 @@ function LikeButton({ postId }) {
   };
 
   return (
-    <button onClick={handleLike} className={`${styles.iconButton} ${isLiked ? styles.liked : ''}`} title={isLiked ? 'Unlike' : 'Like'}>
+    <button
+      onClick={handleLike}
+      className={`${styles.iconButton} ${isLiked ? styles.liked : ''}`}
+      title={isLiked ? 'Unlike' : 'Like'}
+      aria-label={isLiked ? 'Unlike story' : 'Like story'}
+    >
       <Heart size={20} fill={isLiked ? 'currentColor' : 'none'} />
     </button>
   );
 }
+
 export default LikeButton;

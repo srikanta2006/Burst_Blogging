@@ -2,13 +2,14 @@
 
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
+import styles from './MainLayout.module.css';
 
 function MainLayout() {
   return (
-    <div className="min-h-screen font-sans bg-slate-50">
+    <div className={styles.layoutWrapper}>
       <Navbar />
-      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <Outlet /> {/* This is where the protected pages will be rendered */}
+      <main className={styles.mainContent}>
+        <Outlet />
       </main>
     </div>
   );

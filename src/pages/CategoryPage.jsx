@@ -6,6 +6,8 @@ import { db } from '../firebase/config';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { useUserProfiles } from '../context/UserProfileContext';
 import Avatar from '../components/Avatar';
+import styles from './CategoryPage.module.css';
+import { ArrowRight } from 'lucide-react';
 
 function CategoryPage() {
   const { categoryName } = useParams();
@@ -23,8 +25,8 @@ function CategoryPage() {
       postsQuery,
       (snapshot) => {
         const categoryPosts = snapshot.docs
-          .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter(post => post.status === 'published');
+          .map((doc) => ({ id: doc.id, ...doc.data() }))
+          .filter((post) => post.status === 'published');
         setPosts(categoryPosts);
         setLoading(false);
       },
@@ -45,43 +47,58 @@ function CategoryPage() {
   }, [posts, ensureUserProfiles]);
 
   if (loading) {
-    return <div className="text-center py-20">Loading posts for &quot;{categoryName}&quot;...</div>;
+    return (
+      <div className={styles.pageContainer}>
+        <div className={styles.loadingState} role="status">
+          Loading posts for &ldquo;{categoryName}&rdquo;...
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Category: {categoryName}</h1>
-      <div className="space-y-4">
+    <div className={styles.pageContainer}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>
+          Category: <span className={styles.categoryHighlight}>{categoryName}</span>
+        </h1>
+      </header>
+
+      <div className={styles.postList}>
         {posts.length > 0 ? (
-          posts.map(post => {
-            const authorName = profiles[post.authorId]?.username || post.authorUsername || 'Anonymous';
+          posts.map((post) => {
+            const authorName =
+              profiles[post.authorId]?.username || post.authorUsername || 'Anonymous';
             return (
-              <div key={post.id} className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-                <Link to={`/post/${post.id}`} className="text-xl font-bold text-gray-900 hover:text-indigo-600 transition-colors">
+              <article key={post.id} className={styles.postCard}>
+                <Link to={`/post/${post.id}`} className={styles.postTitle}>
                   {post.title}
                 </Link>
-                <div className="flex items-center gap-3 mt-3 mb-4">
+                <div className={styles.authorRow}>
                   <Link to={`/profile/${post.authorId}`} aria-label={`View ${authorName}'s profile`}>
                     <Avatar
                       userId={post.authorId}
                       src={post.authorProfilePic}
                       name={authorName}
-                      className="w-8 h-8"
+                      className={styles.authorAvatar}
                       size="xs"
                     />
                   </Link>
-                  <Link to={`/profile/${post.authorId}`} className="text-sm font-medium text-gray-700 hover:text-indigo-600">
+                  <Link to={`/profile/${post.authorId}`} className={styles.authorName}>
                     {authorName}
                   </Link>
                 </div>
-                <Link to={`/post/${post.id}`} className="text-sm font-semibold text-indigo-600 hover:underline">
-                  Read More &rarr;
+                <Link to={`/post/${post.id}`} className={styles.readMoreLink}>
+                  <span>Read Article</span>
+                  <ArrowRight size={15} aria-hidden="true" />
                 </Link>
-              </div>
+              </article>
             );
           })
         ) : (
-          <p className="text-gray-600">No posts found in this category.</p>
+          <div className={styles.emptyState}>
+            <p>No published stories found in this category yet.</p>
+          </div>
         )}
       </div>
     </div>

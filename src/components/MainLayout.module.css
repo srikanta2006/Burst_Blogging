@@ -1,0 +1,17 @@
+/* src/components/MainLayout.module.css */
+
+.layoutWrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mainContent {
+  flex: 1;
+  width: 100%;
+  padding-top: var(--navbar-height);
+  box-sizing: border-box;
+}

@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import { db } from '../firebase/config';
 import { doc, onSnapshot, writeBatch, arrayUnion, arrayRemove, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
+import { useUserProfiles } from '../context/UserProfileContext';
 import styles from './FollowButton.module.css'; // Import the new stylesheet
 
 function FollowButton({ profileUserId }) {
   const { currentUser } = useAuth();
+  const { currentUserProfile } = useUserProfiles();
   const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ function FollowButton({ profileUserId }) {
         const notificationRef = collection(db, 'users', profileUserId, 'notifications');
         await addDoc(notificationRef, {
           type: 'follow',
-          fromUser: currentUser.displayName || currentUser.email,
+          fromUser: currentUserProfile?.username || currentUser.displayName || currentUser.email?.split('@')[0] || 'A writer',
           fromUserId: currentUser.uid,
           read: false,
           createdAt: serverTimestamp(),

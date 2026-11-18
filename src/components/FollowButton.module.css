@@ -4,38 +4,38 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.625rem 1.5rem;
-  font-size: 0.875rem;
+  padding: 0.55rem 1.35rem;
+  font-size: 0.85rem;
   font-weight: 600;
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: 11px;
   border: none;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
 }
 
 .followButton {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
+  color: #ffffff;
   box-shadow: 0 4px 12px -2px rgba(99, 102, 241, 0.3);
 }
 
 .followButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px -4px rgba(99, 102, 241, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px -3px rgba(99, 102, 241, 0.45);
 }
 
 .unfollowButton {
-  background: white;
-  color: #64748b;
-  border: 2px solid #e2e8f0;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border-color);
 }
 
 .unfollowButton:hover {
-  border-color: #ef4444;
-  color: #ef4444;
+  border-color: var(--danger);
+  color: var(--danger);
+  background: var(--danger-soft);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px -2px rgba(239, 68, 68, 0.2);
 }

@@ -40,7 +40,8 @@ function Login() {
           bio: '',
           profilePictureURL: user.photoURL,
           followers: [],
-          following: []
+          following: [],
+          readingList: []
         });
       }
       navigate('/');

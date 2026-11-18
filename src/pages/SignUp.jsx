@@ -28,6 +28,7 @@ function SignUp() {
         profilePictureURL: '', // THE FIX: This is now blank by default
         followers: [],
         following: [],
+        readingList: [],
         createdAt: serverTimestamp(),
       });
       navigate('/');
@@ -53,6 +54,7 @@ function SignUp() {
           profilePictureURL: user.photoURL || '', // Keeps Google photo if available
           followers: [],
           following: [],
+          readingList: [],
           createdAt: serverTimestamp(),
         });
       }

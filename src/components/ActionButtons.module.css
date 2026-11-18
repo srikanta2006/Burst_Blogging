@@ -1,43 +1,43 @@
 /* src/components/ActionButtons.module.css */
-/* A dedicated, beautiful style for interactive buttons - Instagram Style */
 
 .iconButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px; /* Creates a clickable area around the small icon */
-  border-radius: 50%; /* A round shape for the subtle hover effect */
+  padding: 8px;
+  border-radius: 50%;
   background: transparent;
   border: none;
-  color: #6b7280; /* A standard gray for inactive icons */
+  color: var(--text-muted);
   transition: all 0.2s ease-in-out;
   cursor: pointer;
 }
 
 .iconButton:hover {
-  background: #f3f4f6; /* A very subtle gray background on hover */
-  color: #111827; /* Darker icon color on hover */
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 /* Liked State */
 .liked {
-  color: #ef4444; /* The icon itself turns red */
+  color: var(--danger);
 }
+
 .liked:hover {
-  background: #fee2e2; /* A subtle red background on hover */
-  color: #dc2626;
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 /* Bookmarked State */
 .bookmarked {
-  color: #6366f1; /* The icon itself turns blue/indigo */
-}
-.bookmarked:hover {
-  background: #e0e7ff; /* A subtle blue background on hover */
-  color: #4f46e5;
+  color: var(--accent);
 }
 
-/* A subtle animation when the button is clicked */
+.bookmarked:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 @keyframes pop {
   0% { transform: scale(1); }
   50% { transform: scale(1.2); }
