@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '../firebase/config';
-import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, onSnapshot, writeBatch, arrayUnion, arrayRemove, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import styles from './FollowButton.module.css'; // Import the new stylesheet
 
@@ -11,9 +11,11 @@ function FollowButton({ profileUserId }) {
   const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
-    if (!currentUser) return;
-    const unsub = onSnapshot(doc(db, 'users', currentUser.uid), (doc) => {
-      setIsFollowing(doc.data()?.following?.includes(profileUserId));
+    if (!currentUser || !profileUserId) return;
+    const unsub = onSnapshot(doc(db, 'users', currentUser.uid), (docSnap) => {
+      if (docSnap.exists()) {
+        setIsFollowing(Boolean(docSnap.data()?.following?.includes(profileUserId)));
+      }
     });
     return () => unsub();
   }, [currentUser, profileUserId]);
@@ -25,13 +27,33 @@ function FollowButton({ profileUserId }) {
     }
     const currentUserRef = doc(db, 'users', currentUser.uid);
     const profileUserRef = doc(db, 'users', profileUserId);
+    const willFollow = !isFollowing;
 
-    if (isFollowing) {
-      await updateDoc(currentUserRef, { following: arrayRemove(profileUserId) });
-      await updateDoc(profileUserRef, { followers: arrayRemove(currentUser.uid) });
-    } else {
-      await updateDoc(currentUserRef, { following: arrayUnion(profileUserId) });
-      await updateDoc(profileUserRef, { followers: arrayUnion(currentUser.uid) });
+    try {
+      // Use writeBatch to ensure atomic synchronization between follower and following counts
+      const batch = writeBatch(db);
+      if (willFollow) {
+        batch.update(currentUserRef, { following: arrayUnion(profileUserId) });
+        batch.update(profileUserRef, { followers: arrayUnion(currentUser.uid) });
+      } else {
+        batch.update(currentUserRef, { following: arrayRemove(profileUserId) });
+        batch.update(profileUserRef, { followers: arrayRemove(currentUser.uid) });
+      }
+      await batch.commit();
+
+      // If following, send a notification to the followed user
+      if (willFollow) {
+        const notificationRef = collection(db, 'users', profileUserId, 'notifications');
+        await addDoc(notificationRef, {
+          type: 'follow',
+          fromUser: currentUser.displayName || currentUser.email,
+          fromUserId: currentUser.uid,
+          read: false,
+          createdAt: serverTimestamp(),
+        });
+      }
+    } catch (err) {
+      console.error('Failed to update follow status:', err);
     }
   };
   

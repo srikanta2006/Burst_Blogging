@@ -60,6 +60,31 @@
 }
 .icon {
   color: #6366f1;
+  flex-shrink: 0;
+}
+.avatarBadgeWrapper {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.notifAvatar {
+  width: 36px;
+  height: 36px;
+}
+.typeBadge {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  color: #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 .text {
   font-size: 0.95rem;

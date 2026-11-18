@@ -4,42 +4,75 @@ import { useState, useEffect } from 'react';
 import { db } from '../firebase/config';
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
+import { useUserProfiles } from '../context/UserProfileContext';
 import { Link } from 'react-router-dom';
-import Avatar from './Avatar'; // Import the new Avatar component
+import Avatar from './Avatar';
 import styles from './CommentSection.module.css';
 
 function CommentSection({ postId, postAuthorId, postTitle }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const { currentUser } = useAuth();
+  const { profiles, currentUserProfile, ensureUserProfiles } = useUserProfiles();
+
+  const formatCommentDate = (timestamp) => {
+    if (!timestamp) return 'Just now';
+    try {
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      return isNaN(date.getTime()) ? 'Just now' : date.toLocaleDateString();
+    } catch {
+      return 'Just now';
+    }
+  };
 
   useEffect(() => {
+    if (!postId) return;
     const commentsQuery = query(collection(db, 'posts', postId, 'comments'), orderBy('createdAt', 'asc'));
-    const unsubscribe = onSnapshot(commentsQuery, (snapshot) => {
-      setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    const unsubscribe = onSnapshot(
+      commentsQuery,
+      (snapshot) => {
+        setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      },
+      (error) => {
+        console.error('Error listening to comments:', error);
+      }
+    );
     return () => unsubscribe();
   }, [postId]);
+
+  useEffect(() => {
+    const authorIds = comments.map((c) => c.authorId).filter(Boolean);
+    if (authorIds.length > 0) {
+      ensureUserProfiles(authorIds);
+    }
+  }, [comments, ensureUserProfiles]);
 
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim() || !currentUser) return;
 
+    const commenterName = currentUserProfile?.username || currentUser.displayName || currentUser.email;
+    const commenterPhoto =
+      currentUserProfile?.profilePictureURL !== undefined
+        ? currentUserProfile.profilePictureURL
+        : currentUser.photoURL || '';
+
     try {
       await addDoc(collection(db, 'posts', postId, 'comments'), {
         text: newComment,
         authorId: currentUser.uid,
-        authorUsername: currentUser.displayName || currentUser.email,
-        authorProfilePic: currentUser.photoURL || '',
+        authorUsername: commenterName,
+        authorProfilePic: commenterPhoto,
         createdAt: serverTimestamp()
       });
       setNewComment('');
 
-      if (postAuthorId !== currentUser.uid) {
+      if (postAuthorId && postAuthorId !== currentUser.uid) {
         const notificationRef = collection(db, 'users', postAuthorId, 'notifications');
         await addDoc(notificationRef, {
           type: 'comment',
-          fromUser: currentUser.displayName || currentUser.email,
+          fromUser: commenterName,
+          fromUserId: currentUser.uid,
           postId: postId,
           postTitle: postTitle,
           read: false,
@@ -47,7 +80,7 @@ function CommentSection({ postId, postAuthorId, postTitle }) {
         });
       }
     } catch (err) {
-      console.error("Failed to add comment:", err);
+      console.error('Failed to add comment:', err);
     }
   };
 
@@ -70,23 +103,30 @@ function CommentSection({ postId, postAuthorId, postTitle }) {
         <p>You must be <Link to="/login" className="text-blue-600 hover:underline font-semibold">logged in</Link> to comment.</p>
       )}
       <div className={styles.commentList}>
-        {comments.map(comment => (
-          <div key={comment.id} className={styles.comment}>
-            {/* Replace the old img tag with the new Avatar component */}
-            <Avatar 
-              src={comment.authorProfilePic}
-              name={comment.authorUsername}
-              className={styles.commentAuthorImage}
-            />
-            <div className={styles.commentBody}>
-              <p>
-                <strong className={styles.commentAuthorName}>{comment.authorUsername}</strong>
-                <span className={styles.commentDate}>{new Date(comment.createdAt?.toDate()).toLocaleDateString()}</span>
-              </p>
-              <p className={styles.commentText}>{comment.text}</p>
+        {comments.map(comment => {
+          const commentAuthorName = profiles[comment.authorId]?.username || comment.authorUsername || 'Anonymous';
+          return (
+            <div key={comment.id} className={styles.comment}>
+              <Link to={comment.authorId ? `/profile/${comment.authorId}` : '#'} aria-label={`View ${commentAuthorName}'s profile`}>
+                <Avatar
+                  userId={comment.authorId}
+                  src={comment.authorProfilePic}
+                  name={commentAuthorName}
+                  className={styles.commentAuthorImage}
+                />
+              </Link>
+              <div className={styles.commentBody}>
+                <p>
+                  <Link to={comment.authorId ? `/profile/${comment.authorId}` : '#'} className={styles.commentAuthorName}>
+                    {commentAuthorName}
+                  </Link>
+                  <span className={styles.commentDate}>{formatCommentDate(comment.createdAt)}</span>
+                </p>
+                <p className={styles.commentText}>{comment.text}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

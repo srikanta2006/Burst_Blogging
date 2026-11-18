@@ -63,6 +63,44 @@
   color: var(--primary-text);
 }
 
+.headerAuthorRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.headerAuthorAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(59, 130, 246, 0.35);
+}
+
+.headerAuthorDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.headerAuthorName {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--primary-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.headerAuthorName:hover {
+  color: var(--accent);
+}
+
+.headerPostDate {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: var(--secondary-text);
+}
+
 .content {
   font-family: 'Georgia', serif;
   font-size: 1.125rem;

@@ -6,7 +6,7 @@ import { useClickOutside } from '../hooks/useClickOutside';
 import NotificationPanel from './NotificationPanel';
 import Avatar from './Avatar'; // Import the new component
 import styles from './Navbar.module.css';
-import { Menu, X, Home, LayoutDashboard, Bookmark, LogOut } from 'lucide-react';
+import { Menu, X, Home, LayoutDashboard, Bookmark, Settings, LogOut } from 'lucide-react';
 
 function Navbar() {
   const { currentUser, logout } = useAuth();
@@ -39,10 +39,10 @@ function Navbar() {
                 <Link to="/create-post" className={`${styles.button} hidden md:inline-flex`}>Create Post</Link>
                 <NotificationPanel />
                 <Link to={`/profile/${currentUser.uid}`} title="View Profile">
-                  {/* Replace the img tag with the Avatar component */}
                   <Avatar
+                    userId={currentUser.uid}
                     src={currentUser.photoURL}
-                    name={currentUser.displayName}
+                    name={currentUser.displayName || currentUser.email}
                     className={styles.avatar}
                   />
                 </Link>
@@ -55,6 +55,7 @@ function Navbar() {
                       <Link to="/" className={styles.dropdownLink} onClick={() => setIsDropdownOpen(false)}><Home size={16} /> Home</Link>
                       <Link to="/dashboard" className={styles.dropdownLink} onClick={() => setIsDropdownOpen(false)}><LayoutDashboard size={16} /> Dashboard</Link>
                       <Link to="/reading-list" className={styles.dropdownLink} onClick={() => setIsDropdownOpen(false)}><Bookmark size={16} /> Reading List</Link>
+                      <Link to="/settings" className={styles.dropdownLink} onClick={() => setIsDropdownOpen(false)}><Settings size={16} /> Settings</Link>
                       <hr className="my-1 border-gray-200" />
                       <button onClick={handleLogout} className={`${styles.dropdownButton} ${styles.logoutButton}`}><LogOut size={16} /> Logout</button>
                     </nav>

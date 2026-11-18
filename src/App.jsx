@@ -16,6 +16,7 @@ import CategoryPage from './pages/CategoryPage';
 import ReadingListPage from './pages/ReadingListPage';
 import ProfilePage from './pages/ProfilePage';
 import ProfileEditPage from './pages/ProfileEditPage';
+import UserSettingsPage from './pages/UserSettingsPage';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/create-post" element={<PostEditor />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/reading-list" element={<ReadingListPage />} />
+        <Route path="/settings" element={<UserSettingsPage />} />
       </Route>
     </Routes>
   );

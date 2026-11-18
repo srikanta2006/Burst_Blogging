@@ -58,10 +58,30 @@ function PostEditor() {
       const currentContent = editorRef.current.getContent();
       const categoriesArray = categories.split(',').map(cat => cat.trim()).filter(cat => cat !== '');
       
+      // Retrieve latest user profile data from Firestore to ensure current photo & username are saved with the post
+      let authorPhoto = currentUser.photoURL || '';
+      let authorName = currentUser.displayName || currentUser.email;
+
+      try {
+        const userRef = doc(db, 'users', currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          if (userData.profilePictureURL !== undefined) {
+            authorPhoto = userData.profilePictureURL;
+          }
+          if (userData.username) {
+            authorName = userData.username;
+          }
+        }
+      } catch (userErr) {
+        console.warn('Could not fetch user profile from Firestore, using auth fallback:', userErr);
+      }
+
       const postData = {
         title, content: currentContent, categories: categoriesArray, status,
-        authorId: currentUser.uid, authorUsername: currentUser.displayName || currentUser.email,
-        authorProfilePic: currentUser.photoURL || '',
+        authorId: currentUser.uid, authorUsername: authorName,
+        authorProfilePic: authorPhoto,
         lastUpdatedAt: serverTimestamp(),
       };
 

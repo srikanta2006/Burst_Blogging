@@ -1,19 +1,14 @@
 /* src/components/Avatar.module.css */
 
 .avatarWrapper {
-  display: flex;
+  position: relative;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
   overflow: hidden;
-  background-color: #e5e7eb;
+  background-color: #6366f1;
   flex-shrink: 0;
-}
-
-.avatarImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .initials {
@@ -25,9 +20,49 @@
   font-weight: 700;
   color: white;
   text-transform: uppercase;
-  font-size: 1.25rem; /* Default small size for navbar, comments, etc. */
+  line-height: 1;
+  font-size: 1.125rem;
+  user-select: none;
+}
+
+.xsInitial {
+  font-size: 0.7rem;
+}
+
+.smInitial {
+  font-size: 1.125rem;
+}
+
+.mdInitial {
+  font-size: 2rem;
 }
 
 .largeInitial {
-  font-size: 5rem; /* A larger size specifically for the main profile page avatar */
+  font-size: 4.5rem;
+}
+
+.fallbackIcon {
+  width: 52%;
+  height: 52%;
+  color: white;
+}
+
+.avatarImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 1;
+}
+
+.imageLoading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.imageVisible {
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
 }
