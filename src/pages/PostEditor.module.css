@@ -12,17 +12,53 @@
 
 @media (min-width: 1024px) {
   .editorLayout {
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 340px;
     padding: 1.5rem 1.5rem 4rem;
   }
 }
 
 .mainContent {
   background: var(--bg-surface);
-  border-radius: 18px;
+  border-radius: 20px;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+}
+
+.topNavRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 0.75rem;
+}
+
+.dashboardBreadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.dashboardBreadcrumb:hover {
+  color: var(--accent);
+  transform: translateX(-2px);
+}
+
+.editorBrandBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.775rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid var(--accent-border);
 }
 
 .titleInput {
@@ -30,9 +66,9 @@
   box-sizing: border-box;
   border: none;
   background: transparent;
-  padding: 1.5rem;
-  font-size: 2rem;
-  font-weight: 800;
+  padding: 0.75rem 1.5rem 1.25rem;
+  font-size: 2.2rem;
+  font-weight: 850;
   color: var(--text-primary);
   letter-spacing: -0.025em;
 }
@@ -43,6 +79,7 @@
 
 .titleInput::placeholder {
   color: var(--text-muted);
+  opacity: 0.6;
 }
 
 .editorContainer {
@@ -58,14 +95,14 @@
 
 .settingsCard {
   background: var(--bg-surface);
-  border-radius: 18px;
+  border-radius: 20px;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   padding: 1.5rem;
 }
 
 .settingsHeader {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 750;
   color: var(--text-primary);
   margin: 0 0 1.25rem 0;
@@ -73,16 +110,52 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+/* Story Metrics Pill Group */
+.storyMetrics {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg-subtle);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--border-color);
+}
+
+.metricItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.metricItem:first-child {
+  padding-right: 0.75rem;
+  border-right: 1px solid var(--border-color);
+}
+
 .inputGroup {
   margin-bottom: 1.25rem;
 }
 
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
 .label {
   font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 0.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
   display: block;
+}
+
+.tagIcon {
+  color: var(--text-muted);
 }
 
 .input {
@@ -104,6 +177,70 @@
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
+.hintText {
+  display: block;
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+/* Topic Suggestions */
+.topicSuggestions {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.topicLabel {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.topicPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.suggestionPill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.suggestionPill:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-border);
+}
+
+.suggestionPillActive {
+  background: var(--accent-soft) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+
+.errorAlert {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
 .actions {
   display: flex;
   flex-direction: column;
@@ -114,6 +251,10 @@
 }
 
 .publishButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   width: 100%;
   padding: 0.85rem;
   font-size: 0.95rem;
@@ -124,14 +265,23 @@
   border-radius: 12px;
   cursor: pointer;
   box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.35);
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.2s ease;
 }
 
-.publishButton:hover {
+.publishButton:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
+.publishButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .draftButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   width: 100%;
   padding: 0.85rem;
   font-size: 0.95rem;
@@ -141,9 +291,87 @@
   border: 1px solid var(--border-color);
   border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
-.draftButton:hover {
+.draftButton:hover:not(:disabled) {
   background: var(--bg-hover);
+}
+
+.draftButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Center loading/error state boxes */
+.centerContainer {
+  max-width: 500px;
+  margin: 5rem auto;
+  padding: 0 1rem;
+}
+
+.loadingBox {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 3rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorBox {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 3rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.errorIcon {
+  color: var(--danger);
+}
+
+.errorBox p {
+  color: var(--danger);
+  font-weight: 600;
+  margin: 0;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.backLink:hover {
+  text-decoration: underline;
 }

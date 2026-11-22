@@ -5,6 +5,7 @@ import { auth, db } from '../firebase/config';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
+import BurstLogo from '../components/BurstLogo';
 import styles from './AuthForm.module.css'; // Use the same shared stylesheet
 
 function SignUp() {
@@ -67,6 +68,9 @@ function SignUp() {
   return (
     <div className={styles.pageContainer}>
       <div className={styles.formWrapper}>
+        <div className={styles.logoRow}>
+          <BurstLogo size="md" />
+        </div>
         <div className={styles.header}>
           <h1 className={styles.title}>Create an Account</h1>
           <p className={styles.subtitle}>
